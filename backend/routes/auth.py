@@ -26,7 +26,7 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY", secrets.token_urlsafe(32))
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
+BACKEND_BASE_URL = "https://finexa-ai.onrender.com"
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
@@ -75,7 +75,7 @@ async def register(user: UserCreate):
                 expires_delta=timedelta(hours=24),
             )
             verification_url = (
-                f"http://localhost:8000/auth/verify-email?token={verification_token}"
+                f"{BACKEND_BASE_URL}/auth/verify-email?token={verification_token}"
             )
 
             send_email(
@@ -122,7 +122,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 async def forgot_password(request: ForgotPassword):
     try:
         reset_token = await AuthService.create_reset_token(request.email)
-        reset_url = f"http://localhost:8000/auth/reset-password?token={reset_token}"
+        reset_url = f"{BACKEND_BASE_URL}/auth/reset-password?token={reset_token}"
 
         send_email(
             to=request.email,
@@ -179,7 +179,7 @@ async def resend_verification_email(payload: ResendVerification):
             expires_delta=timedelta(hours=24),
         )
         verification_url = (
-            f"http://localhost:8000/auth/verify-email?token={verification_token}"
+            f"{BACKEND_BASE_URL}/auth/verify-email?token={verification_token}"
         )
 
         send_email(
